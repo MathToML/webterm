@@ -137,7 +137,7 @@ class TerminalSession {
     
     // Only send buffer history if this is a new subscription
     if (!wasSubscribed) {
-      const recentBuffer = this.buffer.slice(-100); // Send last 100 entries
+      const recentBuffer = this.buffer.slice(-BUFFER_MAX_LINES); // Send full buffer
       socket.emit('buffer-history', {
         sessionId: this.id,
         data: recentBuffer.map(b => b.data).join('')
@@ -248,7 +248,7 @@ io.on('connection', (socket) => {
     const session = sessions.get(sessionId);
     
     if (session && session.subscribedSockets.has(socket)) {
-      const recentBuffer = session.buffer.slice(-100);
+      const recentBuffer = session.buffer.slice(-BUFFER_MAX_LINES);
       socket.emit('buffer-history', {
         sessionId: session.id,
         data: recentBuffer.map(b => b.data).join('')
