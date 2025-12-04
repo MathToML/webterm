@@ -916,6 +916,31 @@
                     }
                 }
             });
+
+            // Handle visibility changes (tab switching, laptop sleep/wake)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && fitAddon && term) {
+                    // Terminal canvas is paused when tab is hidden
+                    // Redraw terminal when tab becomes visible again
+                    fitAddon.fit();
+                    term.focus();
+                }
+            });
+
+            // Handle page restoration from browser cache (back/forward navigation)
+            window.addEventListener('pageshow', (event) => {
+                if (fitAddon && term) {
+                    fitAddon.fit();
+                    term.focus();
+                }
+            });
+
+            // Handle window focus restoration
+            window.addEventListener('focus', () => {
+                if (fitAddon && term && !document.hidden) {
+                    fitAddon.fit();
+                }
+            });
         }
         
         function setupTerminalKeyHandler() {
